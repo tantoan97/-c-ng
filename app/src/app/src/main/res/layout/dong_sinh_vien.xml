@@ -17,9 +17,9 @@
         android:id="@+id/textviewTrangThaiCustom"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/textviewThietBiCustom"
-        android:textColor="#11d63b"
+        android:textColor="#00911c"
         android:textSize="20sp"
-        android:text="Trang thai: 1"
+        android:text="Trạng thái: 1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
@@ -46,4 +46,12 @@
         android:src="@android:drawable/ic_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <!--<Switch-->
+        <!--android:id="@+id/switchTrangThai"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignTop="@+id/textviewTrangThaiCustom"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:text="Switch" />-->
 </RelativeLayout>

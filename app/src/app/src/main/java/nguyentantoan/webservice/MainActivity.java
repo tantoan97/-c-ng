@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     ListView lvSinhvien;
     ArrayList<SinhVien> arraySinhVien;
     SinhVienAdapter adapter;
+    Switch swtTrangThai;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         lvSinhvien.setAdapter(adapter);
 
         GetData(urlGetData);
+
     }
 
     private void GetData(String url){
