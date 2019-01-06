@@ -5,9 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -27,15 +25,14 @@ public class UpdateSinhVienActivity extends AppCompatActivity {
     Button btnCapNhat, btnHuy;
     int id = 0;
     String urlUpdate = "https://tantoanbk.000webhostapp.com/update.php";
-    Switch swtTrangThai;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_sinh_vien);
 
         Intent intent = getIntent();
-        final SinhVien sinhVien = (SinhVien) intent.getSerializableExtra("dataSinhVien");
+        SinhVien sinhVien = (SinhVien) intent.getSerializableExtra("dataSinhVien");
 
         AnhXa();
 
@@ -57,28 +54,6 @@ public class UpdateSinhVienActivity extends AppCompatActivity {
                 }
             }
         });
-
-        btnHuy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
-//        swtTrangThai = (Switch) findViewById(R.id.switchTrangThai);
-//        swtTrangThai.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                // String trangthai = edtTrangThai.getText().toString().trim();
-//                int bat = 1;
-//                int tat = 0;
-//                if (isChecked) {
-//                    edtTrangThai.setText(bat);
-//                }else{
-//                    edtTrangThai.setText(tat);
-//                }
-//            }
-//        });
     }
 
     private void CapNhatSinhVien(String url){
@@ -116,7 +91,7 @@ public class UpdateSinhVienActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    public void AnhXa(){
+    private void AnhXa(){
         btnCapNhat = (Button) findViewById(R.id.buttonCapNhat);
         btnHuy = (Button) findViewById(R.id.buttonHuyEdit);
         edtTrangThai = (EditText) findViewById(R.id.editTextTrangThaiEdit);
