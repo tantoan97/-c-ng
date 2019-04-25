@@ -9,7 +9,7 @@ DHT dht(DHTPIN,DHTTYPE);
 const char* ssid = "Connectify-me";      //Ten wifi nha ban
 const char* password = "tantoan97";   //Mat khau wifi nha ban
 String server = "http://tantoanbk.tk";
-//const char* host = "https://tantoanbk.000webhostapp.com"; //Trang web de lay du lieu
+const char* host = "https://tantoanbk.000webhostapp.com"; //Trang web de lay du lieu
 void setup() {
 // Khoi dong Serial
   Serial.begin(115200);
