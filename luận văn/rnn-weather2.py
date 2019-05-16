@@ -16,7 +16,7 @@ num_periods = 24
 f_horizon = 1
 x_data = solar[:(len(solar)-(num_periods*2))]
 x_batches = x_data.reshape(-1, num_periods, 1)
-y_data = solar[1:(len(solar)-(num_periods*2))+f_horizon]
+y_data = solar[f_horizon:(len(solar)-(num_periods*2))+f_horizon]
 y_batches = y_data.reshape(-1, num_periods, 1)
 print(y_batches.shape)
 
@@ -24,7 +24,7 @@ def test_data(series, forecast, num):
     testX = solar[-(num + forecast):][:num].reshape(-1, num_periods, 1)
     testY = solar[-(num):].reshape(-1, num_periods, 1)
     return testX, testY
-X_test, Y_test = test_data(solar, f_horizon, 24*2)
+X_test, Y_test = test_data(solar, f_horizon, num_periods*2)
 print(X_test.shape)
 
 tf.reset_default_graph()
@@ -77,10 +77,16 @@ y_predict=y_pred.reshape(-1)
 	#  y_predict[1,abc]=0
 #print(y_predict.shape)
 #y_predict=y_predict.reshape(1,48)
+
+for i in range(len(y_predict)):
+	abc = max(y_predict[i],0)
+	y_predict[i] = abc
+
 output_array = np.array(y_predict)
 np.savetxt("my_output_file2.csv", output_array, delimiter=",")
 print(y_predict.shape)
 print(y_predict)
+
 import csv
 csvData = y_predict
 with open('predict.csv', 'a') as csvFile:

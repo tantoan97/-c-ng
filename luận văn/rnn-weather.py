@@ -16,7 +16,7 @@ num_periods = 24
 f_horizon = 1
 x_data = temperature[:(len(temperature)-(num_periods*2))]
 x_batches = x_data.reshape(-1, num_periods, 1)
-y_data = temperature[1:(len(temperature)-(num_periods*2))+f_horizon]
+y_data = temperature[f_horizon:(len(temperature)-(num_periods*2))+f_horizon]
 y_batches = y_data.reshape(-1, num_periods, 1)
 print(y_batches.shape)
 
@@ -24,7 +24,7 @@ def test_data(series, forecast, num):
     testX = temperature[-(num + forecast):][:num].reshape(-1, num_periods, 1)
     testY = temperature[-(num):].reshape(-1, num_periods, 1)
     return testX, testY
-X_test, Y_test = test_data(temperature, f_horizon, 24*2)
+X_test, Y_test = test_data(temperature, f_horizon, num_periods*2)
 print(X_test.shape)
 
 tf.reset_default_graph()
