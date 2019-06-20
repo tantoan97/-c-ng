@@ -28,12 +28,12 @@ X_test, Y_test = test_data(temperature, f_horizon, num_periods*2)
 print(X_test.shape)
 
 tf.reset_default_graph()
-inputs = 1 
-#số 1 được thêm vào dữ liệu đầu vào mở rộng để tiện cho việc tính toán
+learning_rate=0.001
 rnn_size = 100
 #kích thước của mạng RNN (số lượng các đơn vị trong mạng)
-output = 1
-learning_rate=0.001
+#inputs = 1 
+#output = 1
+
 dropout_keep_prob = tf.placeholder(tf.float32)
 
 X = tf.placeholder(tf.float32, [None, num_periods, 1])

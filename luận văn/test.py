@@ -13,7 +13,7 @@ data=pd.read_csv(file_path, delimiter=',',header=0,skipinitialspace=True)
 data.head(24)
 
 abc = np.array(data['abc'])
-num_periods = 24
+num_periods = 5
 f_horizon = 1
 soluong=len(abc)
 print(soluong)

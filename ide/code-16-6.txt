@@ -1,0 +1,212 @@
+#include <WiFi.h>
+#include <DHT.h>
+#include <HTTPClient.h>
+float t,h,flat,flon,sun;
+int soil;
+String gui,pre_gui,gui_1,pre_gui_1;
+int ledStatus,lstt,ledStatus_1,lstt_1,wtf,wtf_1,abc,abc_1;
+boolean xyz,xyz_1;
+const char* ssid = "MinhQuan";
+const char* password = "12345678";
+String server = "http://tantoanbk.tk";
+const char* host = "tantoanbk.000webhostapp.com";
+float xu_ly_dulieu(){
+  int phannguyen,bit1,bit2,bit3;
+  phannguyen = Serial2.read();
+  bit1 = Serial2.read();
+  bit2 = Serial2.read();
+  bit3 = Serial2.read();
+  int ghep_pn = ((bit1 << 16) + (bit2 << 8) + bit3);
+  float ghep_pn_f = (float)ghep_pn/1000000;
+  float tong = float(phannguyen)+ghep_pn_f;
+  Serial.println(tong,6);
+  return tong;
+}
+void setup(){
+  Serial.begin(115200);
+  Serial2.begin(9600);
+  delay(10);
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");  
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop(){
+   if(Serial2.read()==0x23){
+      flat = xu_ly_dulieu();
+      flon = xu_ly_dulieu();
+      t = xu_ly_dulieu();
+      h = xu_ly_dulieu();
+     soil = Serial2.read();
+     sun = Serial2.read();
+     if(Serial2.read() == 0x25){
+     Serial.println("trang thai nhan tu tiva");
+     lstt = Serial2.read();
+     Serial.println(lstt);
+     lstt_1 = Serial2.read();
+     Serial.println(lstt_1);
+     
+      ledStatus = lstt;
+      ledStatus_1 = lstt_1;
+      if(ledStatus==2){
+        gui = "1";        
+      }
+      if(ledStatus==3){
+        gui = "0";  
+      }
+       if(ledStatus_1==4){
+        gui_1 = "1";        
+      }
+      if(ledStatus_1==5){
+        gui_1 = "0";  
+      } 
+     }
+     Serial.println("trang thai gui len server");
+     Serial.println(gui);
+     Serial.println(gui_1);
+  }
+  
+  Get_Data();
+  Serial.println("trang thai nhan tu server");
+  Serial.println(abc);
+  Serial.println(abc_1);
+  if(gui != pre_gui){
+    xyz = 1;   
+    while(xyz==1){
+    Get_Button();
+    Get_Data();
+    Serial.print("RL12: ");
+    Serial.println(gui);
+    if(String(abc)==gui){
+      xyz = 0;
+      break;}
+    }
+  }
+  pre_gui = gui;
+  if(gui_1 != pre_gui_1){
+    xyz_1 = 1;   
+    while(xyz_1==1){
+    Get_Button_1();
+    Get_Data();
+    Serial.print("RL13: ");
+    Serial.println(gui_1);
+    if(String(abc_1)==gui_1){
+      xyz_1 = 0;
+      break;}
+    }
+  }
+  pre_gui_1 = gui_1;
+  Serial.println("trang thai gui qua tiva");
+  Serial2.write(wtf);
+  Serial.println(wtf);
+  Serial2.write(wtf_1);
+  Serial.println(wtf_1);
+  
+  Serial.print("connecting to ");
+  Serial.println(host);
+  WiFiClient client;
+  const int httpPort = 80;
+  if (!client.connect(host, httpPort)) {
+    Serial.println("connection failed");
+    return;
+  }
+  String url = "/api/insertweather.php?temp="+String(t)+"&hum="+String(h)+"&soil="+String(soil)+"&solar="+String(sun)+"&flat="+String(flat)+"&flon="+String(flon);
+  Serial.print("Requesting URL: ");
+  Serial.println(url);
+  client.print(String("GET ") + url + " HTTP/1.1\r\n" +
+               "Host: " + host + "\r\n" + 
+               "Connection: close\r\n\r\n");
+  while(client.available()){
+    String line = client.readStringUntil('\r');
+    Serial.print(line);
+  }
+  Serial.println();
+  Serial.println("closing connection");
+}
+void Get_Data(){
+  HTTPClient GetStatus;
+  String Link = server + "/getdata.php";
+  GetStatus.begin(Link);
+  int Code = GetStatus.GET();
+  String Content = GetStatus.getString();
+  GetStatus.end();
+  Serial.println(Content);
+    int RL12 = Content.indexOf("RL12");
+    int RL13 = Content.indexOf("RL13");
+    int bat12 = Content.indexOf("1",RL12 + 1);
+    int tat12 = Content.indexOf("0",RL12 + 1);
+    int tt12 = Content.indexOf("RL",RL12 + 1);
+    int bat13 = Content.indexOf("1",RL13 + 1);
+    int tat13 = Content.indexOf("0",RL13 + 1);
+    int tt13 = Content.indexOf("RL",RL13 + 1);
+    if (RL12 != -1) {
+      if (bat12 != -1 && bat12 < tt12){
+        wtf = 2;
+        abc = 1;}
+      if (tat12 != -1 && tat12 < tt12){
+        wtf = 3;
+        abc = 0;}
+    } 
+    Serial.println("--------------");
+    if (RL13 != -1) {
+      if (bat13 != -1 && bat13 < tt13){
+        wtf_1 = 4;
+        abc_1 = 1;}
+      if (tat13 != -1 && tat13 < tt13){
+        wtf_1 = 5;
+        abc_1 = 0;}
+    }
+}
+void Get_Button(){
+  Serial.print("connecting to ");
+  Serial.println(host);
+  WiFiClient client;
+  const int httpPort = 80;
+  if (!client.connect(host, httpPort)) {
+    Serial.println("connection failed");
+    return;}
+    int id = 1;
+  String urls = "/api/capnhat.php?id="+String(id)+"&trangthai="+String(gui);
+  Serial.print("Requesting URL: ");
+  Serial.println(urls);
+  client.print(String("GET ") + urls + " HTTP/1.1\r\n" +
+               "Host: " + host + "\r\n" + 
+               "Connection: close\r\n\r\n");
+  while(client.available()){
+    String line = client.readStringUntil('\r');
+    Serial.print(line);
+  }
+  Serial.println();
+  Serial.println("closing connection");
+}
+void Get_Button_1(){
+  Serial.print("connecting to ");
+  Serial.println(host);
+  WiFiClient client;
+  const int httpPort = 80;
+  if (!client.connect(host, httpPort)) {
+    Serial.println("connection failed");
+    return;}
+    int id = 2;
+  String urls = "/api/capnhat.php?id="+String(id)+"&trangthai="+String(gui_1);
+  Serial.print("Requesting URL: ");
+  Serial.println(urls);
+  client.print(String("GET ") + urls + " HTTP/1.1\r\n" +
+               "Host: " + host + "\r\n" + 
+               "Connection: close\r\n\r\n");
+  while(client.available()){
+    String line = client.readStringUntil('\r');
+    Serial.print(line);
+  }
+  Serial.println();
+  Serial.println("closing connection");
+}

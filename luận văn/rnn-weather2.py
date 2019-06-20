@@ -28,9 +28,9 @@ X_test, Y_test = test_data(solar, f_horizon, num_periods*2)
 print(X_test.shape)
 
 tf.reset_default_graph()
-inputs = 1
+#inputs = 1
 rnn_size = 100
-output = 1
+#output = 1
 learning_rate=0.001
 dropout_keep_prob = tf.placeholder(tf.float32)
 
